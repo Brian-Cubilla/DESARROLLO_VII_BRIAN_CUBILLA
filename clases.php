@@ -1,18 +1,17 @@
 <?php
-interface Prestable{
-    function obtenerDetallesPrestamos(): string;
-}
 
-abstract class RecursoBiblioteca implements Prestable {
+use Entrada as GlobalEntrada;
+
+require_once "Detalle.php";
+
+abstract class Entrada {
     public $id;
-    public $titulo;
-    public $autor;
-    public $anioPublicacion;
-    public $estado;
-    public $fechaAdquisicion;
+    public $fecha_creacion;
     public $tipo;
+    public $titulo;
+    public $descripcion;
 
-    public function __construct($datos) {
+    public function __construct($datos = []) {
         foreach ($datos as $key => $value) {
             if (property_exists($this, $key)) {
                 $this->$key = $value;
@@ -20,153 +19,116 @@ abstract class RecursoBiblioteca implements Prestable {
         }
     }
 
-    public function getId()
-    {
+    public function getId() {
         return $this->id;
     }
-    public function getTitulo()
-    {
+
+    
+    public function getTitulo() {
         return $this->titulo;
     }
-    public function getAutor()
-    {
-        return $this->autor;
+    
+    public function getDescripcion() {
+        return $this->descripcion;
     }
-    public function getanioPublicacion()
-    {
-        return $this->anioPublicacion;
+    abstract public function obtenerDetallesEspeficos(): string;
+}
+
+
+
+
+class  EntradaUnaColumna extends Entrada {
+
+    public function __construct($datos=[]) {
+        parent::__construct($datos=[]);
     }
-    public function getEstado()
-    {
-        return $this->estado;
+
+    public function obtenerDetallesEspeficos(): string {
+        return "Entrada de una columna Titulo :". parent::getTitulo()  ."Descripcion:"  .parent::getDescripcion();
     }
-    public function getFechaAdquisicion()
-    {
-        return $this->fechaAdquisicion;
+}
+
+class  EntradaDosColumna extends Entrada {
+    public $titulo2;
+    public $descripcion2;
+
+    public function __construct($titulo2,$descripcion2) {
+        parent::__construct($datos=[]);
+        $this->titulo2=$titulo2;
+        $this->descripcion2=$descripcion2;
     }
-    public function getTipo()
-    {
-        return $this->tipo;
+
+    public function obtenerDetallesEspeficos(): string {
+        return "Entrada de Dos columna Titulo :". parent::getTitulo()  ."Descripcion:"  .parent::getDescripcion()."Titulo 2: {$this->titulo2} Descripcion 2 {$this->descripcion2}:";
     }
+}
+class  EntradaTresColumna extends Entrada {
+    public $titulo2;
+    public $descripcion2;
+    public $titulo3;
+    public $descripcion3;
+
+    public function __construct($titulo2,$descripcion2,$titulo3,$descripcion3) {
+        parent::__construct($datos=[]);
+        $this->titulo2=$titulo2;
+        $this->$descripcion2=$descripcion2;
+        $this->titulo3=$titulo3;
+        $this->descripcion3=$descripcion3;
+    }
+
+    public function obtenerDetallesEspeficos(): string {
+        return "Entrada de Tres columna Titulo :". parent::getTitulo()  ."Descripcion:"  .parent::getDescripcion()."Titulo 2: {$this->titulo2} Descripcion 2 {$this->descripcion2} Titulo 3: {$this->titulo3} Descripcion3: {$this->descripcion3}";
+    } 
+    
+}
 
    
-}
 
-// Implementar las clases Libro, Revista y DVD aquí
+class GestorBlog {
+    private $entradas = [];
 
-class Libro extends RecursoBiblioteca implements Prestable{
-    public $isbn;
-    public function __construct($isbn){
-        $this->isbn = $isbn;
-
-    }
-    
-
-    public function obtenerDestallesPrestamo():string
-    {
-    return "ID {$this->id}Libro: Titulo: {$this->titulo}, Autor: {$this->autor}, Año de Publicación: {$this->anioPublicacion}, Estado: {$this->estado}, Fecha  de Adquisición: {$this->fechaAdquisicion}, tipo: {$this->tipo}, isbn: {$this->isbn}. ";
-    }
-    
-       
-    
-}
-class Revista extends RecursoBiblioteca implements Prestable {
-    public $numeroEdicion;
-
-    public function __construct($numeroEdicion){
-        $this->numeroEdicion = $numeroEdicion;
-        
-    }
-
-    public function obtenerDestallesPrestamo():string
-    {
-    return "ID {$this->id}Libro: Titulo: {$this->titulo}, Autor: {$this->autor}, Año de Publicación: {$this->anioPublicacion}, Estado: {$this->estado}, Fecha  de Adquisición: {$this->fechaAdquisicion}, tipo: {$this->tipo},numero de Edicion: {$this->numeroEdicion}. ";
-    }
-}
-class DVD extends RecursoBiblioteca implements Prestable{
-    public $duracion;
-    public function __construct($duracion){
-        $this->duracion = $duracion;
-        
-    }
-    public function obtenerDestallesPrestamo():string
-    {
-    return "ID {$this->id}Libro: Titulo: {$this->titulo}, Autor: {$this->autor}, Año de Publicación: {$this->anioPublicacion}, Estado: {$this->estado}, Fecha  de Adquisición: {$this->fechaAdquisicion}, tipo: {$this->tipo},duracion: {$this->duracion}.";
-    }
-}
-
-
-
-
-class GestorBiblioteca  {
-    private $recursos = [];
-
-    public function cargarRecursos() {
-        $json = file_get_contents('biblioteca.json');
-        $data = json_decode($json, true);
-        
-        foreach ($data as $recursoData) {
-            $recurso = new RecursoBiblioteca($recursoData);
-            $this->recursos[] = $recurso;
-        }
-        
-        return $this->recursos;
-    }
-
-    public function agregarRecurso(RecursoBiblioteca $recurso) {
-        $this->recursos[] = $recurso;
-        $this->guardarRecurso();
-    }
-    
-    public function eliminarRecurso($id) {
-        $this->recursos = array_filter($this->recursos, function($recurso) use ($id) {
-            return $recurso->getId() !== $id;
-        });
-        $this->guardarRecurso();
-    }
-    
-    public function actualizarRecurso($id ,RecursoBiblioteca $recurso) {
-        foreach ($this->recursos as $key => $r) {
-            if ($r->getId() === $recurso->getId()) {
-                $this->recursos[$key] = $recurso;
-                break;
-            }
-            
-        }
-        $this->guardarRecurso();
-    }
-
-    
-    public function actualizarEstadoRecurso($id, $nuevoEstado) {
-        foreach ($this->recursos as $recurso) {
-            if ($recurso->getId() === $id) {
-                $recurso->setEstado($nuevoEstado);
-                break;
+    public function cargarEntradas() {
+        if (file_exists('blog.json')) {
+            $json = file_get_contents('blog.json');
+            $data = json_decode($json, true);
+            foreach ($data as $entradaData) {
+                $this->entradas[] = new Entrada();
             }
         }
-        $this->guardarRecurso();
     }
 
-    public function buscarRecursoPorEstado($estado) {
-        return array_filter($this->recursos, function($recurso) use ($estado) {
-            return $recurso->getEstado() === $estado;
-        });
+    public function guardarEntradas() {
+        $data = array_map(function($entrada) {
+            return get_object_vars($entrada);
+        }, $this->entradas);
+        file_put_contents('blog.json', json_encode($data, JSON_PRETTY_PRINT));
     }
-    
-    public function listarRecurso($filtroEstado = '') {
-        if ($filtroEstado) {
-            return $this->buscarRecursoPorEstado($filtroEstado);
+
+    public function obtenerEntradas() {
+        return $this->entradas;
+    }
+
+
+
+    public function agregarEntrada(Entrada $entrada) {
+        $this->entradas[] = $entrada;
+    }
+
+    public function eliminarEntrada($id) {
+        foreach ($this->entradas as $indice => $entrada) {
+            if ($entrada->id == $id) {
+                unset($this->entrada[$indice]);
+                return;
+            }
         }
-        return $this->recursos;
     }
 
-    private function guardarRecurso() {
-        $recursos = array_map(function($recurso) {
-            return $recurso->toArray();
-        }, $this->recursos);
-    
-        file_put_contents('tareas.json', json_encode($recursos));
+    public function actualizarEntrada(Entrada $entradaActualizada) {
+        foreach ($this->entradas as $indice => $entrada) {
+            if ($entrada->getId() == $entradaActualizada->getId()) {
+                $this->$entrada[$indice] = $entradaActualizada;
+                return;
+            }
+        }
     }
-    
-}
-
+}   
