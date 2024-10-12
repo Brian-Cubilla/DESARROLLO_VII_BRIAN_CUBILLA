@@ -7,6 +7,10 @@ function sanitizarEmail($email) {
     return filter_var(trim($email), FILTER_SANITIZE_EMAIL);
 }
 
+function sanitizarFechaNacimiento($fecha) {
+    return filter_var($fecha, FILTER_SANITIZE_STRING);
+}
+
 function sanitizarEdad($edad) {
     return filter_var($edad, FILTER_SANITIZE_NUMBER_INT);
 }

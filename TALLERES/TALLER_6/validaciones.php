@@ -7,6 +7,23 @@ function validarEmail($email) {
     return filter_var($email, FILTER_VALIDATE_EMAIL);
 }
 
+function validarFechaNacimiento($fecha) {
+    // Asegurarse de que la fecha esté en un formato válido
+    $fecha_actual = new DateTime();
+    $fecha_nacimiento = DateTime::createFromFormat('Y-m-d', $fecha);
+    
+    return $fecha_nacimiento && $fecha_nacimiento < $fecha_actual;
+}
+
+function calcularEdad($fechaNacimiento) {
+    $fecha_actual = new DateTime();
+    $fecha_nacimiento = new DateTime($fechaNacimiento);
+    $edad = $fecha_actual->diff($fecha_nacimiento)->y;
+    
+    return $edad;
+}
+
+
 function validarEdad($edad) {
     return is_numeric($edad) && $edad >= 18 && $edad <= 120;
 }
