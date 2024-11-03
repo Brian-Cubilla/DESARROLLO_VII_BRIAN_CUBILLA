@@ -121,4 +121,3 @@ print_r($reporte);
 
 $pdo = null;
 ?>
-        

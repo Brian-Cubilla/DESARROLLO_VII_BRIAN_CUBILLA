@@ -134,7 +134,6 @@ class QueryBuilder {
     }
 }
 
-// Clase para construir consultas de inserción seguras
 class InsertBuilder {
     private $pdo;
     private $table;
@@ -173,7 +172,6 @@ class InsertBuilder {
     }
 }
 
-// Clase para construir consultas de actualización seguras
 class UpdateBuilder {
     private $pdo;
     private $table;
@@ -226,44 +224,3 @@ class UpdateBuilder {
         return $stmt->execute($this->parameters);
     }
 }
-
-// Ejemplo de uso:
-require_once "config_pdo.php";
-
-// Crear instancia del QueryBuilder
-$qb = new QueryBuilder($pdo);
-
-// Ejemplo de consulta compleja
-$resultados = $qb->table('productos')
-    ->select('p.id', 'p.nombre', 'c.nombre as categoria', 'p.precio')
-    ->join('categorias c', 'p.categoria_id', '=', 'c.id')
-    ->where('p.precio', '>', 100)
-    ->whereIn('c.id', [1, 2, 3])
-    ->groupBy('c.id')
-    ->having('COUNT(*)', 2)
-    ->orderBy('p.precio', 'DESC')
-    ->limit(10)
-    ->execute();
-
-// Ejemplo de inserción
-$insert = new InsertBuilder($pdo);
-$insert->into('productos')
-       ->values([
-           'nombre' => 'Nuevo Producto',
-           'precio' => 199.99,
-           'categoria_id' => 1
-       ])
-       ->execute();
-
-// Ejemplo de actualización
-$update = new UpdateBuilder($pdo);
-$update->table('productos')
-       ->set(['precio' => 299.99])
-       ->where('id', 1)
-       ->execute();
-
-// Mostrar resultados
-echo "<pre>";
-print_r($resultados);
-echo "</pre>";
-?>

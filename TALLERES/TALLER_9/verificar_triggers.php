@@ -52,4 +52,3 @@ verificarMovimientoInventario($pdo, 1, 15);
 
 $pdo = null;
 ?>
-        

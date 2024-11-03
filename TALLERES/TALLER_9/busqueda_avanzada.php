@@ -1,33 +1,37 @@
 <?php
+require_once "config_pdo.php";
+
 function busquedaAvanzada($pdo, array $criterios) {
     $qb = new QueryBuilder($pdo);
+    
     $qb->table('productos p')
-       ->select('p.*', 'c.nombre as categoria')
+       ->select('p.id', 'p.nombre', 'c.nombre as categoria', 'p.precio')
        ->join('categorias c', 'p.categoria_id', '=', 'c.id');
 
-    // Aplicar filtros dinámicamente
-    if (isset($criterios['nombre'])) {
+    if (!empty($criterios['nombre'])) {
         $qb->where('p.nombre', 'LIKE', '%' . $criterios['nombre'] . '%');
     }
 
-    if (isset($criterios['precio_min'])) {
+    if (!empty($criterios['precio_min'])) {
         $qb->where('p.precio', '>=', $criterios['precio_min']);
     }
 
-    if (isset($criterios['precio_max'])) {
+    if (!empty($criterios['precio_max'])) {
         $qb->where('p.precio', '<=', $criterios['precio_max']);
     }
 
-    if (isset($criterios['categorias']) && is_array($criterios['categorias'])) {
+    if (!empty($criterios['categorias']) && is_array($criterios['categorias'])) {
         $qb->whereIn('c.id', $criterios['categorias']);
     }
 
-    if (isset($criterios['ordenar_por'])) {
-        $qb->orderBy($criterios['ordenar_por'], $criterios['orden'] ?? 'ASC');
+    if (!empty($criterios['ordenar_por'])) {
+        $orden = $criterios['orden'] ?? 'ASC';
+        $qb->orderBy($criterios['ordenar_por'], $orden);
     }
 
-    if (isset($criterios['limite'])) {
-        $qb->limit($criterios['limite'], $criterios['offset'] ?? 0);
+    if (!empty($criterios['limite'])) {
+        $offset = $criterios['offset'] ?? 0;
+        $qb->limit($criterios['limite'], $offset);
     }
 
     return $qb->execute();
@@ -45,4 +49,9 @@ $criterios = [
 ];
 
 $resultados = busquedaAvanzada($pdo, $criterios);
+
+// Mostrar los resultados
+echo "<pre>";
+print_r($resultados);
+echo "</pre>";
 ?>
