@@ -1,0 +1,33 @@
+body {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh;
+    margin: 0;
+    font-family: Arial, sans-serif;
+    background-color: #f4f4f4; /* Color de fondo */
+}
+.login-container {
+    text-align: center;  /* Centrar el contenido dentro del contenedor */
+    background-color: #fff;  /* Fondo blanco para el contenedor */
+    padding: 40px;  /* Espaciado interior */
+    border-radius: 8px;  /* Bordes redondeados */
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);  /* Sombra del contenedor */
+    width: 300px;  /* Ancho del contenedor */
+}
+h2 {
+    color: #333;  /* Color del título */
+    margin-bottom: 20px;  /* Espacio debajo del título */
+}
+a {
+    text-decoration: none;  /* Quitar subrayado al enlace */
+    color: #fff;  /* Color de texto blanco */
+    background-color: #4285f4; /* Color de fondo de Google */
+    padding: 10px 20px;  /* Espaciado del botón */
+    border-radius: 4px;  /* Bordes redondeados para el botón */
+    font-weight: bold;  /* Texto en negrita */
+    transition: background-color 0.3s;  /* Transición suave para el cambio de color */
+}
+a:hover {
+    background-color: #357ae8;  /* Cambiar color al pasar el ratón sobre el botón */
+}
